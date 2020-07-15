@@ -131,7 +131,7 @@ export class MapComponent implements OnInit {
          lng: details.Location.Longitude,
       },
       options: {
-        icon: 'http://localhost:4200/assets/pin.png'
+        icon: '/assets/pin.png'
       },
       info: details
     };
