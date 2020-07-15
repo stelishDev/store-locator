@@ -1,0 +1,26 @@
+<div class="store-list-filter">
+  <div class="standard-content">
+    <div class="pull-right">
+      <app-dropdown-small labelText="filter stores" (openEvent)="showFilters=!showFilters"></app-dropdown-small>
+    </div>
+  </div>
+
+  <div class="store-list-filter-bg" *ngIf="showFilters">
+    <div class="store-list-filter-desc">
+      <small>Filter stores by choosing stores that have one or more of the following options:</small>
+    </div>
+
+    <div class="horizontal-align store-list-filter-content" *ngIf="showFilters">
+      <div class="store-list-filter-item">
+        <input id="filterPhamarcyCb" type="checkbox" [checked]="withPharmacy" (change)="toggleFilter(filterType.pharmacy)"/>
+        <label for="filterPhamarcyCb">Pharamcy</label>
+      </div>
+
+      <div class="store-list-filter-item">
+        <input id="filterLiquorCb" type="checkbox" [checked]="withLiquor" (change)="toggleFilter(filterType.liquor)"/>
+        <label for="filterLiquorCb">Liquor</label>
+      </div>
+    </div>
+  </div>
+
+</div>

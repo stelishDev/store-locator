@@ -1,0 +1,33 @@
+@import './tokens.scss';
+button {
+  font-family: 'open_sansregular',Helvetica,Arial,sans-serif;
+  -webkit-transition: all .2s linear;
+  -moz-transition: all .2s linear;
+  border-radius: $button-radius;
+  border-color: transparent;
+  font-size: $font-size-16;
+  padding: 10px 15px;
+  white-space: normal;
+
+  &.primary {
+    background: $fun-green;
+    color: $white;
+  }
+
+  &.clear {
+    background: transparent !important;
+    border: none;
+    border-color: #ccc;
+    outline: none;
+    color: $limed-spruce
+  }
+
+  &.secondary {
+    color: #fff;
+    background-color: $parcey;
+  }
+
+  &.small {
+    font-size: $font-size-12;
+  }
+}

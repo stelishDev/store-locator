@@ -1,0 +1,6 @@
+@mixin relative-container {
+  position: relative;
+  display: block;
+  box-sizing: border-box;
+  contain: content;
+}

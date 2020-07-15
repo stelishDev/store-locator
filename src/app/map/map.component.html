@@ -1,0 +1,14 @@
+<google-map height="500px" width="100%" [zoom]="zoom" [center]="mapCenter" [options]="mapOptions">
+  <map-marker #markerElem *ngFor="let markerItem of markers"
+  [position]="markerItem.position"
+  [label]="markerItem.label"
+  [title]="markerItem.title"
+  [options]="markerItem.options"
+  (mapClick)="openInfo(marker, markerItem.info)">
+  </map-marker>
+  <map-info-window #mapInfoWindow [position]="infoContentPosition" [options]="infoContentOptions">
+    <div *ngIf="selectedStore">
+      <app-store-details-card [store]="selectedStore"></app-store-details-card>
+    </div>
+  </map-info-window>
+</google-map>

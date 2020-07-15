@@ -1,0 +1,43 @@
+<div class="store-details-list-item">
+  <p class="store-heading">Countdown {{store.Name}}</p>
+  <small [innerHTML]="storeDataUtilsService.replaceLineBreaksWithCommas(store)"></small>
+
+  <!-- CTA -->
+  <div class="store-options horizontal-align">
+    <button class="secondary small">
+      <app-phone></app-phone>
+      <p>{{ storeDataUtilsService.extractPhoneNumberFromContactDetailsProp(store) }}</p>
+    </button>
+    <button class="secondary small">
+      <app-car></app-car>
+      <p>DIRECTIONS</p>
+    </button>
+  </div>
+
+  <!-- opening hours -->
+  <div class="store-dropdown">
+    <button class="clear horizontal-align store-heading" (click)="toggleStoreOpening(store)">
+      Opening Times
+      <app-caret-down *ngIf="!store.showStoreOpeningTimes"></app-caret-down>
+      <app-caret-up *ngIf="store.showStoreOpeningTimes"></app-caret-up>
+    </button>
+    <div *ngIf="store.showStoreOpeningTimes">
+      <div *ngFor="let hours of storeHours">
+        <small class="dropdown-content" [innerHTML]="hours"></small>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pharmacy -->
+  <div class="store-dropdown" *ngIf="store.PharmacyContactDetails">
+    <button class="clear horizontal-align store-heading" (click)="togglePharmacyDetails(store)">
+      Pharmacy details
+      <app-caret-down *ngIf="!store.showPharmacyDetails"></app-caret-down>
+      <app-caret-up *ngIf="store.showPharmacyDetails"></app-caret-up>
+    </button>
+    <div *ngIf="store.showPharmacyDetails">
+      <small [innerHTML]="storeDataUtilsService.extractOpenHours(store.PharmacyOpeningHours)[0]"></small>
+      <small [innerHTML]="store.PharmacyContactDetails"></small>
+    </div>
+  </div>
+</div>

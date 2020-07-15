@@ -1,0 +1,39 @@
+@import '../../styles/mixins.scss';
+@import '../../styles/tokens.scss';
+@import '../../styles/checkbox.scss';
+@import '../../styles/layout.scss';
+@import '../../styles/checkbox.scss';
+@import '../../styles/typography.scss';
+
+.store-list-filter {
+  @include relative-container();
+  padding-bottom: $space-m;
+
+  .store-list-filter-desc {
+    padding: $space-m 0 0;
+  }
+
+  .store-list-filter-content {
+    padding: $space-s 0;
+
+    .store-list-filter-item {
+      width: 150px;
+      display: inline-flex;
+
+      label {
+        margin-left: $space-s;
+        margin-top: 0;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        display: block;
+        line-height: 34px;
+        font-size: $font-size-16;
+      }
+    }
+  }
+
+  .pull-right {
+    float: right;
+    clear: both;
+  }
+}

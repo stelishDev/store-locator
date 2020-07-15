@@ -1,0 +1,46 @@
+@import '../../styles/buttons.scss';
+@import '../../styles/mixins.scss';
+@import '../../styles/typography.scss';
+
+.store-details-list-item {
+  @include relative-container();
+  border-bottom: solid 1px #ccc;
+  margin-bottom: $space-m;
+  padding-bottom: $space-m;
+
+  .store-heading {
+    font-weight: 700;
+    margin: $space-xxs 0;
+    font-size: $font-size-16;
+  }
+
+  .store-options {
+
+    > button:nth-child(1) {
+      margin-right: $space-s;
+    }
+
+    > button {
+      display: inline-flex;
+      margin: $space-xxs 0;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+
+      p {
+        margin: $space-xxs;
+      }
+    }
+  }
+
+  .store-dropdown {
+    > button {
+      padding: $space-s 0 0;
+    }
+  }
+
+  .dropdown-content {
+    p {
+      margin: $space-xxs 0;
+    }
+  }
+}

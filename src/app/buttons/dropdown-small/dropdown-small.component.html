@@ -1,0 +1,5 @@
+<button class="dropdown-label-small clear horizontal-align" (click)="toggle()">
+  <label>{{labelText}}</label>
+  <app-caret-down *ngIf="!open"></app-caret-down>
+  <app-caret-up *ngIf="open"></app-caret-up>
+</button>

@@ -1,0 +1,22 @@
+@import './tokens.scss';
+
+.main-content {
+  margin-top: $space-s;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+.standard-content {
+  
+}
+
+.horizontal-align {
+  display: inline-flex;
+}
+
+  /* Responsive Styles */
+  @media screen and (max-width: 767px) {
+  }
+
+  @media screen and (max-width: 575px) {
+  }

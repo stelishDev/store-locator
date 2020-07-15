@@ -1,0 +1,15 @@
+@import '../../../styles/buttons.scss';
+@import '../../../styles/tokens.scss';
+@import '../../../styles/typography.scss';
+
+.dropdown-label-small {
+  label {
+    color: $fun-green;
+    font-weight: 500;
+    letter-spacing: 0.81px;
+    margin-right: $space-xxs;
+    user-select: none;
+  }
+  margin: 0;
+  padding: 0;
+}
