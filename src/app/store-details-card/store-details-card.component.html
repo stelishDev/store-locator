@@ -4,7 +4,7 @@
 
   <!-- CTA -->
   <div class="store-options horizontal-align">
-    <button class="secondary small">
+    <button class="secondary small" (click)="callStore()">
       <app-phone></app-phone>
       <p>{{ storeDataUtilsService.extractPhoneNumberFromContactDetailsProp(store) }}</p>
     </button>

@@ -46,4 +46,13 @@ export class StoreDetailsCardComponent implements OnInit {
     &destination=Countdown+${this.store.Name}&travelmode=driving`, '_blank');
   }
 
+  callStore(): void {
+    let raw = this.storeDataUtilsService.extractPhoneNumberFromContactDetailsProp(this.store);
+    if (raw) {
+      // strip parenthesis and whitespaces
+      const cleannum = raw.replace(/[() ]/g, '');
+      window.location.href = `tel:${cleannum}`;
+    }
+  }
+
 }
