@@ -968,7 +968,7 @@ function StoreDetailsCardComponent_app_caret_up_17_Template(rf, ctx) { if (rf & 
 } }
 function StoreDetailsCardComponent_div_18_div_1_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div");
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](1, "small", 11);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](1, "small", 10);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
 } if (rf & 2) {
     const hours_r5 = ctx.$implicit;
@@ -977,7 +977,7 @@ function StoreDetailsCardComponent_div_18_div_1_Template(rf, ctx) { if (rf & 1) 
 } }
 function StoreDetailsCardComponent_div_18_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div");
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](1, StoreDetailsCardComponent_div_18_div_1_Template, 2, 1, "div", 10);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](1, StoreDetailsCardComponent_div_18_div_1_Template, 2, 1, "div", 9);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
 } if (rf & 2) {
     const ctx_r2 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"]();
@@ -1004,14 +1004,14 @@ function StoreDetailsCardComponent_div_19_div_5_Template(rf, ctx) { if (rf & 1) 
 } }
 function StoreDetailsCardComponent_div_19_Template(rf, ctx) { if (rf & 1) {
     const _r10 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵgetCurrentView"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div", 6);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](1, "button", 7);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div", 5);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](1, "button", 6);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("click", function StoreDetailsCardComponent_div_19_Template_button_click_1_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵrestoreView"](_r10); const ctx_r9 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"](); return ctx_r9.togglePharmacyDetails(ctx_r9.store); });
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](2, " Pharmacy details ");
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](3, StoreDetailsCardComponent_div_19_app_caret_down_3_Template, 1, 0, "app-caret-down", 8);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](4, StoreDetailsCardComponent_div_19_app_caret_up_4_Template, 1, 0, "app-caret-up", 8);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](3, StoreDetailsCardComponent_div_19_app_caret_down_3_Template, 1, 0, "app-caret-down", 7);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](4, StoreDetailsCardComponent_div_19_app_caret_up_4_Template, 1, 0, "app-caret-up", 7);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](5, StoreDetailsCardComponent_div_19_div_5_Template, 3, 2, "div", 8);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](5, StoreDetailsCardComponent_div_19_div_5_Template, 3, 2, "div", 7);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
 } if (rf & 2) {
     const ctx_r3 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"]();
@@ -1053,9 +1053,17 @@ class StoreDetailsCardComponent {
         window.open(`https://www.google.com/maps/dir/?api=1&query=${this.store.Latitude}, ${this.store.Longitude}
     &destination=Countdown+${this.store.Name}&travelmode=driving`, '_blank');
     }
+    callStore() {
+        let raw = this.storeDataUtilsService.extractPhoneNumberFromContactDetailsProp(this.store);
+        if (raw) {
+            // strip parenthesis and whitespaces
+            const cleannum = raw.replace(/[() ]/g, '');
+            window.location.href = `tel:${cleannum}`;
+        }
+    }
 }
 StoreDetailsCardComponent.ɵfac = function StoreDetailsCardComponent_Factory(t) { return new (t || StoreDetailsCardComponent)(); };
-StoreDetailsCardComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: StoreDetailsCardComponent, selectors: [["app-store-details-card"]], inputs: { store: "store" }, decls: 20, vars: 7, consts: [[1, "store-details-list-item"], [1, "store-heading"], [3, "innerHTML"], [1, "store-options", "horizontal-align"], [1, "secondary", "small"], [1, "secondary", "small", 3, "click"], [1, "store-dropdown"], [1, "clear", "horizontal-align", "store-heading", 3, "click"], [4, "ngIf"], ["class", "store-dropdown", 4, "ngIf"], [4, "ngFor", "ngForOf"], [1, "dropdown-content", 3, "innerHTML"]], template: function StoreDetailsCardComponent_Template(rf, ctx) { if (rf & 1) {
+StoreDetailsCardComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: StoreDetailsCardComponent, selectors: [["app-store-details-card"]], inputs: { store: "store" }, decls: 20, vars: 7, consts: [[1, "store-details-list-item"], [1, "store-heading"], [3, "innerHTML"], [1, "store-options", "horizontal-align"], [1, "secondary", "small", 3, "click"], [1, "store-dropdown"], [1, "clear", "horizontal-align", "store-heading", 3, "click"], [4, "ngIf"], ["class", "store-dropdown", 4, "ngIf"], [4, "ngFor", "ngForOf"], [1, "dropdown-content", 3, "innerHTML"]], template: function StoreDetailsCardComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](1, "p", 1);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](2);
@@ -1063,12 +1071,13 @@ StoreDetailsCardComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵ
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](3, "small", 2);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](4, "div", 3);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](5, "button", 4);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("click", function StoreDetailsCardComponent_Template_button_click_5_listener() { return ctx.callStore(); });
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](6, "app-phone");
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](7, "p");
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](8);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](9, "button", 5);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](9, "button", 4);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("click", function StoreDetailsCardComponent_Template_button_click_9_listener() { return ctx.launchMapDirections(); });
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](10, "app-car");
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](11, "p");
@@ -1076,16 +1085,16 @@ StoreDetailsCardComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵ
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](13, "div", 6);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](14, "button", 7);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](13, "div", 5);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](14, "button", 6);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("click", function StoreDetailsCardComponent_Template_button_click_14_listener() { return ctx.toggleStoreOpening(ctx.store); });
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](15, " Opening Times ");
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](16, StoreDetailsCardComponent_app_caret_down_16_Template, 1, 0, "app-caret-down", 8);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](17, StoreDetailsCardComponent_app_caret_up_17_Template, 1, 0, "app-caret-up", 8);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](16, StoreDetailsCardComponent_app_caret_down_16_Template, 1, 0, "app-caret-down", 7);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](17, StoreDetailsCardComponent_app_caret_up_17_Template, 1, 0, "app-caret-up", 7);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](18, StoreDetailsCardComponent_div_18_Template, 2, 1, "div", 8);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](18, StoreDetailsCardComponent_div_18_Template, 2, 1, "div", 7);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](19, StoreDetailsCardComponent_div_19_Template, 6, 3, "div", 9);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](19, StoreDetailsCardComponent_div_19_Template, 6, 3, "div", 8);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
     } if (rf & 2) {
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](2);
