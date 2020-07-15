@@ -41,4 +41,9 @@ export class StoreDetailsCardComponent implements OnInit {
     }
   }
 
+  launchMapDirections(): void {
+    window.open(`https://www.google.com/maps/dir/?api=1&query=${this.store.Latitude}, ${this.store.Longitude}
+    &destination=Countdown+${this.store.Name}&travelmode=driving`, '_blank');
+  }
+
 }

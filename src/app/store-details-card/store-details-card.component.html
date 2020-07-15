@@ -8,7 +8,7 @@
       <app-phone></app-phone>
       <p>{{ storeDataUtilsService.extractPhoneNumberFromContactDetailsProp(store) }}</p>
     </button>
-    <button class="secondary small">
+    <button class="secondary small" (click)="launchMapDirections()">
       <app-car></app-car>
       <p>DIRECTIONS</p>
     </button>
