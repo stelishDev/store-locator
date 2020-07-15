@@ -820,7 +820,7 @@ class MapComponent {
                 lng: details.Location.Longitude,
             },
             options: {
-                icon: 'http://localhost:4200/assets/pin.png'
+                icon: '/assets/pin.png'
             },
             info: details
         };
