@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { StoreDetails, StoreHours, ParsedStoreDetails, OpeningHours } from '../types/StoreDetails';
+import { StoreDetails, StoreHours, ParsedStoreDetails, OpeningHours, ContactDetails } from '../types/StoreDetails';
 import { Observable, ObjectUnsubscribedError } from 'rxjs';
 
 @Injectable({
@@ -7,10 +7,23 @@ import { Observable, ObjectUnsubscribedError } from 'rxjs';
 })
 export class StoreDataUtilsService {
 
+  private phoneNumberRegex = /[(]{0,1}[0-9]{1,2}[)]\s[0-9]{3}\s[0-9]{4}/g;
+
+  private betweenTagsRegex = /[^<\>]+(?=>)/g;
+
+  private phoneOrFaxRegex = /,?  ?Phone:| ?Fax:/g;
+
+  private lineBreakRegex = /<br \/>/g;
+
+  private newLineRegex = /\n/g;
+
+  private emailRegex = /[a-z]{3,}.pharmacy@countdown.co.nz/g;
+
+
   constructor() { }
 
   public extractPhoneNumberFromContactDetailsProp(store: StoreDetails): string {
-    const num = store.ContactDetails.match(/[(]{0,1}[0-9]{1,2}[)]\s[0-9]{3}\s[0-9]{4}/g);
+    const num = store.ContactDetails.match(this.phoneNumberRegex);
     return num && num.length ? num[0] : '';
   }
 
@@ -27,6 +40,12 @@ export class StoreDataUtilsService {
    *
    * <p>Cnr Anzac &amp; Clyde Roads<br />Browns Bay<br />Auckland<br />Phone: (09) 476 5974<br />Fax: (09) 476 5975</p>
    *
+   * And,
+   *
+   * "<p>Cnr Te Irirangi Drive &amp; Ti Rakau Drive<br />Botany<br />Auckland<br />Store Ph: (09) 271 3634<br />
+   * Store Fax: (09) 274 3751<br /><br /><strong>CD Pharmacy Botany</strong><br />Pharmacy Ph: (09) 255 9787 <br />
+   * Pharmacy Fax: (09) 255 9786 <br />botany.pharmacy@countdown.co.nz<br /><em>Open Mon - Sun: 9am - 8pm</em></p>"
+   *
    * To something like:
    *
    * "AMP Centre, Ground Floor, Lower Albert Street, Auckland, 1010"
@@ -35,17 +54,40 @@ export class StoreDataUtilsService {
    */
   public extractAddressFromAddressProp(address: string): string {
     // convert \n  & <br /> to spaces
-    return address.replace(/\n/g, ' ')
-    .replace(/<br \/>/g, ', ')
+    return address.replace(this.newLineRegex, ' ')
+    .replace(this.lineBreakRegex, ', ')
     // replace everything between <span
-    .replace(/[^<\>]+(?=>)/g, '')
-    .replace(/<>/g, '')
-    .replace(/[(]{0,1}[0-9]{1,2}[)]\s[0-9]{3}\s[0-9]{4}/g, '')
-    .replace(/, Phone:|, Fax:/g, '');
+    .replace(this.betweenTagsRegex, '')
+    .replace(/<>|&nbsp;/g, '')
+    .replace(/ &amp;/g, '')
+
+    // remove any phone numbers
+    .replace(this.phoneNumberRegex, '')
+    .replace(this.phoneOrFaxRegex, '')
+
+    // replace email addresses
+    .replace(this.emailRegex, '')
+
+    // remove postcodes
+    .replace(/,? [0-9]{4}/g, '')
+
+    // remove store hours
+    .replace(/Open [a-zA-Z]{3} - [a-zA-Z]{3}: [0-9]{1,}(am|pm) - ([0-9]{1,}(am|pm)|midnight)/g, '')
+
+    // cleanup
+    // TODO: tidy up these sode effects
+    .replace(/CD Pharmacy [a-zA-Z]{3,}/g, '')
+    .replace(/,   ,?  | , /g, '')
+    .replace(/ Phone:| Ph/g, '')
+    .replace(/ Fax:| Fax/g, '')
+    .replace(/,?Pharmacy:| ?:?Pharmacy,? /g, '')
+    .replace(/, Store|:Store/g, '')
+    .replace(/,?armacy(:Ph)? ?:?,|,?armacy/g, '')
+    .replace(/  ? ?,?Bay/g, '');
   }
 
   public replaceLineBreaksWithCommas(store: StoreDetails): string {
-    return store.Address.replace(/<br \/>/g, ',&nbsp;');
+    return store.Address.replace(this.lineBreakRegex, ',&nbsp;');
   }
 
   public extractOpenHours(storeHours: string): Array<string> {
@@ -78,6 +120,8 @@ export class StoreDataUtilsService {
    * (09) 271 3634</a></span><br /><span>Store Fax:&nbsp;<a href="tel:+6492743751">(09) 274 3751</a></span></p>"
    *
    * @returns Array
+   *
+   * example below include extra time period for Liquour trading hours
    * [
    *  'Mon - Sun',
    *  '7am - 7pm',
@@ -158,6 +202,50 @@ export class StoreDataUtilsService {
     return hours;
   }
 
+  /**
+   * Get's contact details from HTML string like:
+   *
+   * "<p>Cnr Anzac &amp; Clyde Roads<br />Browns Bay<br />Auckland<br />
+   * Phone: (09) 476 5974<br />Fax: (09) 476 5975<br /><br /> <strong>CD Pharmacy Browns Bay</strong><br />
+   * Pharmacy Ph: (09) 475 9125<br />Pharmacy Fax: (09) 478 9008<br />brownsbay.pharmacy@countdown.co.nz<br />
+   * <em>Open Mon - Sun: 9am - 8pm</em></p>"
+   *
+   * AND,
+   *
+   * "<p>Cnr Anzac &amp; Clyde Roads<br />Browns Bay<br />Auckland</p>
+   * <p>Pharmacy Ph:&nbsp;(09) 475 9125<br />Pharmacy Fax:&nbsp;(09) 478 9008<br />brownsbay.pharmacy@countdown.co.nz</p>
+   * <p>Free prescription* at this pharmacy.<br />*$5 off the standard subsidised patient co-payment charge</p>
+   * <p>&nbsp;</p>"
+   *
+   * @returns ContactDetails
+   * @param str
+   */
+  public getContactDetailsFromHTML(str: string): ContactDetails {
+    let cd = {} as ContactDetails;
+
+    // check for Pharmacy notes tag
+    if (this.getPharmacyNotesFromContactString(str)) {
+      const strArr = str.split(/<p>|<\/p>/g).filter(section => section.indexOf('Free prescription') === -1);
+      str = '';
+      strArr.forEach(s => str += s);
+    }
+
+    const numbers = str.match(this.phoneNumberRegex);
+    const email = str.match(this.emailRegex);
+
+    cd.physicalAddress = this.extractAddressFromAddressProp(str);
+    cd.phone = numbers ? numbers[0] : '';
+    cd.fax = numbers && numbers.length === 2 ? numbers[1] : '';
+    cd.email = email && email.length ? email[0] : '';
+
+    return cd;
+  }
+
+  public getPharmacyNotesFromContactString(str: string): string | null {
+    const strArr = str.split(/<p>|<\/p>/g).filter(section => section.indexOf('Free prescription') !== -1);
+    return strArr[0] || null;
+  }
+
   public converStoreDetailsArrayIntoParseDetailsArray(sdArr: StoreDetails[]): Observable<Array<ParsedStoreDetails>> {
     let details: ParsedStoreDetails[] = [];
     return new Observable( (obs) => {
@@ -168,6 +256,9 @@ export class StoreDataUtilsService {
           psd.PharmacyOpeningHours = this.getStoreHoursObject(sd.PharmacyOpeningHours);
           psd.PharmacyHolidayHours = this.getStoreHoursObject(sd.PharmacyHolidayHours);
           psd.Address = this.extractAddressFromAddressProp(sd.Address);
+          psd.ContactDetails = this.getContactDetailsFromHTML(sd.ContactDetails);
+          psd.PharmacyContactDetails = this.getContactDetailsFromHTML(sd.PharmacyContactDetails);
+          psd.PharmacyNotes = this.getPharmacyNotesFromContactString(sd.PharmacyContactDetails);
           psd.Name = sd.Name;
           psd.IsDryStore = sd.IsDryStore;
           psd.Latitude = sd.Latitude;

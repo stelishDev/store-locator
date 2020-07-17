@@ -11,6 +11,7 @@ export interface ParsedStoreDetails {
   PharmacyContactDetails: ContactDetails,
   PharmacyHolidayHours: StoreHours[],
   PharmacyOpeningHours: StoreHours[],
+  PharmacyNotes: string,
   Region: StoreRegion,
   StoreHasPharmacy: boolean,
   showStoreOpeningTimes?: boolean
@@ -36,8 +37,8 @@ export interface ContactDetails {
   postOfficeBox: string,
   phone: string,
   fax: string,
-  email: string
-
+  email: string,
+  physicalAddress: string
 }
 
 export interface StoreDetails {
