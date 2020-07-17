@@ -13,11 +13,16 @@ export class StoresListStore {
       this.storesApiService = apiService;
 
       this.apiService
-      .getStores().subscribe((res: StoreDetails[])=>{
+      .getStores().subscribe(
+        (res: StoreDetails[])=>{
         if (res) {
           const stores = res;
           this.updateStore(stores);
         }
+      });
+
+      this.apiService.getParsedStores().subscribe(res => {
+        console.log(res);
       });
     }
 

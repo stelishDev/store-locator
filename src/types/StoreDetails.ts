@@ -1,3 +1,45 @@
+export interface ParsedStoreDetails {
+  ContactDetails: ContactDetails,
+  Address: string,
+  IsDryStore: boolean,
+  Latitude: string,
+  Location: StoreGeoLocation,
+  Longitude: string,
+  MapZoom: number,
+  Name: string,
+  OpeningHours: StoreHours[],
+  PharmacyContactDetails: ContactDetails,
+  PharmacyHolidayHours: StoreHours[],
+  PharmacyOpeningHours: StoreHours[],
+  Region: StoreRegion,
+  StoreHasPharmacy: boolean,
+  showStoreOpeningTimes?: boolean
+}
+
+export interface StoreHours {
+  type: string,
+  hours: OpeningHours;
+}
+
+export interface OpeningHours {
+  periodStart: string,
+  periodEnd: string,
+  hourStart: string,
+  hourEnd: string
+}
+
+export interface ContactDetails {
+  streetNumber: string,
+  streetAddress: string,
+  suburb: string,
+  city: string,
+  postOfficeBox: string,
+  phone: string,
+  fax: string,
+  email: string
+
+}
+
 export interface StoreDetails {
   Address: string,
   Brand: string,
