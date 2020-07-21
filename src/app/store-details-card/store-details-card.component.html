@@ -1,12 +1,12 @@
-<div class="store-details-list-item">
+<div class="store-details-list-item" *ngIf="store">
   <p class="store-heading">Countdown {{store.Name}}</p>
-  <small [innerHTML]="storeDataUtilsService.replaceLineBreaksWithCommas(store)"></small>
+  <small>{{ store.Address }}</small>
 
   <!-- CTA -->
   <div class="store-options horizontal-align">
-    <button class="secondary small" (click)="callStore()">
+    <button class="secondary small" (click)="callStore()" *ngIf="store.ContactDetails && store.ContactDetails.phone">
       <app-phone></app-phone>
-      <p>{{ storeDataUtilsService.extractPhoneNumberFromContactDetailsProp(store) }}</p>
+      <p>{{ store.ContactDetails.phone }}</p>
     </button>
     <button class="secondary small" (click)="launchMapDirections()">
       <app-car></app-car>
@@ -21,23 +21,39 @@
       <app-caret-down *ngIf="!store.showStoreOpeningTimes"></app-caret-down>
       <app-caret-up *ngIf="store.showStoreOpeningTimes"></app-caret-up>
     </button>
-    <div *ngIf="store.showStoreOpeningTimes">
-      <div *ngFor="let hours of storeHours">
-        <small class="dropdown-content" [innerHTML]="hours"></small>
+    <div *ngIf="store.showStoreOpeningTimes && store.OpeningHours">
+      <div *ngIf="store.OpeningHours.length === 0">
+        <small>Temporily closed</small>
+      </div>
+      <div *ngIf="store.OpeningHours.length">
+        <div class="dropdown-content" *ngFor="let hours of store.OpeningHours; let i = index">
+          <div class="dropdown-trading">
+              <p class="dropdown-trading-label" *ngIf="i === 1">Liquor trading hours:</p>
+              <p class="dropdown-trading-period">{{ hours.hours.periodStart + ' - ' + hours.hours.periodEnd }}</p>
+              <p class="dropdown-trading-period">{{ hours.hours.hourStart + ' - ' + hours.hours.hourEnd }}</p>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
   <!-- Pharmacy -->
-  <div class="store-dropdown" *ngIf="store.PharmacyContactDetails">
+  <div class="store-dropdown" *ngIf="store.StoreHasPharmacy">
     <button class="clear horizontal-align store-heading" (click)="togglePharmacyDetails(store)">
       Pharmacy details
       <app-caret-down *ngIf="!store.showPharmacyDetails"></app-caret-down>
       <app-caret-up *ngIf="store.showPharmacyDetails"></app-caret-up>
     </button>
     <div *ngIf="store.showPharmacyDetails">
-      <small [innerHTML]="storeDataUtilsService.extractOpenHours(store.PharmacyOpeningHours)[0]"></small>
-      <small [innerHTML]="store.PharmacyContactDetails"></small>
+      <div class="dropdown-trading" *ngFor="let period of store.PharmacyOpeningHours">
+        <p class="dropdown-trading-period">{{ period.hours.periodStart + ' - ' + period.hours.periodEnd }}</p>
+        <p class="dropdown-trading-period">{{ period.hours.hourStart + ' - ' + period.hours.hourEnd }}</p>
+      </div>
+      <p class="dropdown-trading-label">Pharmacy contact details:</p>
+      <small>{{ store.PharmacyContactDetails.phone }}</small><br>
+      <small>{{ store.PharmacyContactDetails.fax }}</small><br>
+      <small>{{ store.PharmacyContactDetails.email }}</small>
+      <p class="store-notes" *ngIf="store.PharmacyNotes" [innerHTML]="store.PharmacyNotes"></p>
     </div>
   </div>
 </div>

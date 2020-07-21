@@ -63,6 +63,7 @@ export class AppComponent implements OnDestroy, OnInit {
     if (!this.region) {
       return [];
     }
+
     let stores = this.stores.filter(store => {
       return this.region === store.Region.Name;
     });
@@ -129,7 +130,6 @@ export class AppComponent implements OnDestroy, OnInit {
   }
 
   private filterStores(filter: string[]): void {
-    console.log('filters', filter);
     this.storeFilters = filter;
     this._stores = this.storesFromRegion;
   }

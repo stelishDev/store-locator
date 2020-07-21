@@ -4,7 +4,6 @@
 
 .store-details-list-item {
   @include relative-container();
-  border-bottom: solid 1px #ccc;
   margin-bottom: $space-m;
   padding-bottom: $space-m;
 
@@ -22,7 +21,7 @@
 
     > button {
       display: inline-flex;
-      margin: $space-xxs 0;
+      margin: $space-s 0 $space-xxs;
       text-overflow: ellipsis;
       white-space: nowrap;
 
@@ -39,8 +38,35 @@
   }
 
   .dropdown-content {
-    p {
+
+    > p {
       margin: $space-xxs 0;
+      b {
+        margin: $space-xxs 0 0;
+      }
     }
+  }
+
+  .dropdown-trading {
+    @include relative-container();
+  }
+
+  .dropdown-trading-label {
+    margin: $space-s 0 0;
+    font-weight: 700;
+  }
+
+  .dropdown-trading-period {
+    width: 50%;
+    text-align: left;
+    position: relative;
+    display: block;
+    float: left;
+    margin: $space-xs 0 $space-xxs;
+  }
+
+  .store-notes {
+    color: $limed-spruce;
+    font-size: $font-size-14;
   }
 }

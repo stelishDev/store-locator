@@ -16,7 +16,6 @@ export class MapComponent implements OnInit {
 
   @Input()
   set stores(stores: StoreDetails[]) {
-    console.log('stores:', stores);
     if (stores && stores.length) {
       if (stores.length === 1) {
         this.updateMap(stores[0]);
@@ -27,7 +26,6 @@ export class MapComponent implements OnInit {
 
   @Input()
   set selectedRegion(region: StoreDetails | StoreRegion) {
-    console.log('region:', region);
     if (region) {
       this.updateMap(region);
     }

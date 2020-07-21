@@ -1,46 +1,13 @@
 @import '../../styles/buttons.scss';
 @import '../../styles/mixins.scss';
 @import '../../styles/typography.scss';
+@import '../../styles/tokens.scss';
 
 .store-details-list {
   @include relative-container();
-
-  // .store-details-list-item {
-  //   @include relative-container();
-  //   border-bottom: solid 1px #ccc;
-  //   margin-bottom: $space-m;
-  //   padding-bottom: $space-m;
-
-  //   .store-heading {
-  //     font-weight: 700;
-  //     margin: $space-xxs 0;
-  //   }
-
-  //   .store-options {
-
-  //     > button:nth-child(1) {
-  //       margin-right: $space-s;
-  //     }
-
-  //     > button {
-  //       display: inline-flex;
-
-  //       p {
-  //         margin: $space-xxs;
-  //       }
-  //     }
-  //   }
-
-  //   .store-dropdown {
-  //     > button {
-  //       padding: $space-m 0 0;
-  //     }
-  //   }
-
-  //   .dropdown-content {
-  //     > p {
-  //       margin: $space-xxs 0;
-  //     }
-  //   }
-  // }
+  > .store-details-item-wrapper {
+    > .store-details-list-item {
+      border-bottom: solid 1px $limed-spruce !important;
+    }
+  }
 }

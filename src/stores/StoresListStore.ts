@@ -7,22 +7,15 @@ import { StoresApiService } from '../services/StoresApiService';
 export class StoresListStore {
     private subject = new Subject<any>();
 
-    private storesApiService:StoresApiService;
-
     constructor(private apiService: StoresApiService) {
-      this.storesApiService = apiService;
 
       this.apiService
-      .getStores().subscribe(
+      .getParsedStores().subscribe(
         (res: StoreDetails[])=>{
         if (res) {
           const stores = res;
           this.updateStore(stores);
         }
-      });
-
-      this.apiService.getParsedStores().subscribe(res => {
-        console.log(res);
       });
     }
 

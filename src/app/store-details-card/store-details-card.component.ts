@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { StoreDataUtilsService } from '../../services/store-data-utils.service';
-import { StoreDetails } from '../../types/StoreDetails';
+import { ParsedStoreDetails } from '../../types/StoreDetails';
 
 @Component({
   selector: 'app-store-details-card',
@@ -10,22 +10,19 @@ import { StoreDetails } from '../../types/StoreDetails';
 export class StoreDetailsCardComponent implements OnInit {
 
   @Input()
-  public store: StoreDetails;
+  public store: ParsedStoreDetails;
 
   public storeDataUtilsService: StoreDataUtilsService = new StoreDataUtilsService();
 
-  public storeHours: string[] = [];
+  googleBaseDirectionsApi: string = 'https://www.google.com/maps/dir/?api=1&query=';
 
   constructor() { }
 
   ngOnInit(): void {
-    if (this.store) {
-      this.storeHours = this.storeDataUtilsService
-        .extractOpenHours(this.store.OpeningHours);
-    }
+    //
   }
 
-  toggleStoreOpening(store: StoreDetails): void {
+  toggleStoreOpening(store: ParsedStoreDetails): void {
     if (!store.hasOwnProperty('showStoreOpeningTimes')) {
       store['showStoreOpeningTimes'] = true;
     } else {
@@ -33,7 +30,7 @@ export class StoreDetailsCardComponent implements OnInit {
     }
   }
 
-  togglePharmacyDetails(store: StoreDetails): void {
+  togglePharmacyDetails(store: ParsedStoreDetails): void {
     if (!store.hasOwnProperty('showPharmacyDetails')) {
       store['showPharmacyDetails'] = true;
     } else {
@@ -42,15 +39,16 @@ export class StoreDetailsCardComponent implements OnInit {
   }
 
   launchMapDirections(): void {
-    window.open(`https://www.google.com/maps/dir/?api=1&query=${this.store.Latitude}, ${this.store.Longitude}
-    &destination=Countdown+${this.store.Name}&travelmode=driving`, '_blank');
+    if (this.store.Latitude && this.store.Longitude && this.store.Name) {
+      window.open(`${this.googleBaseDirectionsApi}${this.store.Latitude}, ${this.store.Longitude}
+        &destination=Countdown+${this.store.Name}&travelmode=driving`, '_blank');
+    }
   }
 
   callStore(): void {
-    let raw = this.storeDataUtilsService.extractPhoneNumberFromContactDetailsProp(this.store);
-    if (raw) {
+    if (this.store && this.store.ContactDetails.phone) {
       // strip parenthesis and whitespaces
-      const cleannum = raw.replace(/[() ]/g, '');
+      const cleannum = this.store.ContactDetails.phone.replace(/[() ]/g, '');
       window.location.href = `tel:${cleannum}`;
     }
   }

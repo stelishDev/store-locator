@@ -17,13 +17,17 @@ export class StoreDataUtilsService {
 
   private newLineRegex = /\n/g;
 
-  private emailRegex = /[a-z]{3,}.pharmacy@countdown.co.nz/g;
+  private pharmacyEmailRegex = /[a-z]{3,}.pharmacy@countdown.co.nz/g;
+
+  private dashOrToRegex = /-|to/g; // handles 7am - 7pm OR 7am to 7pm
+
+  private tempClosedRegex = /temporarily closed/g;
 
 
   constructor() { }
 
-  public extractPhoneNumberFromContactDetailsProp(store: StoreDetails): string {
-    const num = store.ContactDetails.match(this.phoneNumberRegex);
+  public extractPhoneNumberFromContactDetailsProp(store: ParsedStoreDetails): string {
+    const num = store.ContactDetails.phone.match(this.phoneNumberRegex);
     return num && num.length ? num[0] : '';
   }
 
@@ -66,7 +70,7 @@ export class StoreDataUtilsService {
     .replace(this.phoneOrFaxRegex, '')
 
     // replace email addresses
-    .replace(this.emailRegex, '')
+    .replace(this.pharmacyEmailRegex, '')
 
     // remove postcodes
     .replace(/,? [0-9]{4}/g, '')
@@ -75,7 +79,7 @@ export class StoreDataUtilsService {
     .replace(/Open [a-zA-Z]{3} - [a-zA-Z]{3}: [0-9]{1,}(am|pm) - ([0-9]{1,}(am|pm)|midnight)/g, '')
 
     // cleanup
-    // TODO: tidy up these sode effects
+    // TODO: tidy up these side effects
     .replace(/CD Pharmacy [a-zA-Z]{3,}/g, '')
     .replace(/,   ,?  | , /g, '')
     .replace(/ Phone:| Ph/g, '')
@@ -90,30 +94,24 @@ export class StoreDataUtilsService {
     return store.Address.replace(this.lineBreakRegex, ',&nbsp;');
   }
 
-  public extractOpenHours(storeHours: string): Array<string> {
-    let arr = storeHours.split(/<p>|<\/p>/g).filter(s => { return s.length > 3 });
-    let hours = [];
-    arr.forEach(seg => {
-      const update = seg.replace(/mon|Mon/g, 'Monday')
-      .replace(/tue|Tue/g, 'Tuesday')
-      .replace(/wed|Wed/g, 'Wednesday')
-      .replace(/thu|Thu/g, 'Thursday')
-      .replace(/fri|Fri/g, 'Friday')
-      .replace(/sat|Sat/g, 'Saturday')
-      .replace(/sun|Sun/g, 'Sunday')
-      .replace(/Sunday:|Sunday,/g, 'Sunday&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;')
-      .replace(/hours:|hours/g, 'hours&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
-
-      hours.push(update);
-    });
-    // trim phone numbers
-    return hours;
-  }
-
   /**
    * Handles extracting opening hours from strings like the following:
    *
    * "<p>Mon - Sun: 7am - 7pm</p><p>Liquor trading hours:&nbsp;7am - 7pm</p>"
+   *
+   * And,
+   *
+   * "<p>Mon - Sun, 7am - midnight</p>↵<p>Liquor trading hours:&nbsp;7am - 11pm</p>"
+   *
+   * And,
+   *
+   * "<p>Pharmacy Ph: <a href="tel:+6475412245">(07) 541 2245</a><br />
+   * Pharmacy Fax: <a href="tel:+6475412246">(07) 541 2246</a><br />bayfair.pharmacy@countdown.co.nz</p>
+   * ↵<p><em>Open Mon - Sun: 9am - 8pm</em></p>
+   * ↵<p>&nbsp;</p>
+   * ↵<p><em>Store hours: Mon - Sun:&nbsp;7am - 10pm</em></p>"
+   *
+   * And,
    *
    * "<p>Mon - Sun: 9am-8pm</p><p>Store hours: Mon - Sun,&nbsp;7am - 10pm<br />
    * Alcohol trading hours&nbsp;7am - 10pm<br /><span>Store Ph:&nbsp;<a href="tel:+6492713634">
@@ -135,15 +133,16 @@ export class StoreDataUtilsService {
     let arr = storeHours.split(/<p>|<\/p>/g).filter(s => { return s.length > 3 });
     let hours = [];
     arr.forEach(seg => {
-      // now extract
       // given the current form of data pharmacy hours contain store and liquor hours
       // so we only need the pharmacy hours and discard the rest, so check the this segment
       // doesnt contain those parts
-      if(!seg.match(/Store hours:|Alcohol trading hours/g)) {
+      if(!seg.match(/Store hours:|Alcohol trading hours/g) && !seg.match(/Pharmacy Ph/g)) {
 
         // split out content inside <p> tag by : inorder to extract days from hours
-        // for example <p>Mon - Sun: 7am - 7pm</p> to ['Mon - Sun', '7am - 7pm']
-        const segments = seg.split(':');
+        // for example:
+        // <p>Mon - Sun: 7am - 7pm</p> to ['Mon - Sun', '7am - 7pm']
+        // <p>Mon - Sun, 7am to 10pm</p>
+        const segments = seg.split(/:|,/g);
 
         segments.forEach( segment => {
           // format
@@ -156,7 +155,8 @@ export class StoreDataUtilsService {
           .replace(/sun|Sun/g, 'Sunday')
           // trim
           .replace(/Liquor trading hours|&nbsp;/g, '')
-          .replace(/:| /g, '');
+          .replace(/:| /g, '')
+          .replace(/<em>Open|<\/em>/g, '');
 
           if (update && update.length > 2) {
             hours.push(update);
@@ -168,7 +168,17 @@ export class StoreDataUtilsService {
   }
 
   public getStoreHoursObject(str: string): StoreHours[] {
+
     let hours:StoreHours[] = [];
+
+    // check for Temporarily closed
+    if(str.toLowerCase().match(this.tempClosedRegex)) {
+      let storeHours:StoreHours = {} as StoreHours;
+      storeHours.type = 'closed';
+      hours.push(storeHours);
+      return hours;
+    }
+
     const hrsArr = this.extractOpenHoursAsArray(str);
 
     // handle store hours
@@ -179,8 +189,8 @@ export class StoreDataUtilsService {
       storeHours.type = 'Store hours';
       storeHours.hours.periodStart = hrsArr[0].split('-')[0];
       storeHours.hours.periodEnd = hrsArr[0].split('-')[1];
-      storeHours.hours.hourStart = hrsArr[1].split('-')[0];
-      storeHours.hours.hourEnd = hrsArr[1].split('-')[1];
+      storeHours.hours.hourStart = hrsArr[1].split(this.dashOrToRegex)[0];
+      storeHours.hours.hourEnd = hrsArr[1].split(this.dashOrToRegex)[1];
 
       hours.push(storeHours);
     }
@@ -193,8 +203,8 @@ export class StoreDataUtilsService {
       liquorHours.type = 'Liquor trading hours';
       liquorHours.hours.periodStart = hrsArr[0].split('-')[0];
       liquorHours.hours.periodEnd = hrsArr[0].split('-')[1];
-      liquorHours.hours.hourStart = hrsArr[2].split('-')[0];
-      liquorHours.hours.hourEnd = hrsArr[2].split('-')[1];
+      liquorHours.hours.hourStart = hrsArr[2].split(this.dashOrToRegex)[0];
+      liquorHours.hours.hourEnd = hrsArr[2].split(this.dashOrToRegex)[1];
 
       hours.push(liquorHours);
     }
@@ -231,7 +241,7 @@ export class StoreDataUtilsService {
     }
 
     const numbers = str.match(this.phoneNumberRegex);
-    const email = str.match(this.emailRegex);
+    const email = str.match(this.pharmacyEmailRegex);
 
     cd.physicalAddress = this.extractAddressFromAddressProp(str);
     cd.phone = numbers ? numbers[0] : '';
